@@ -12,20 +12,26 @@ namespace Tests
   [TestFixture]
   public class Test
   {
-    private const string c_allCharactersIncludingBrokenOnes = 
-      "^ ° ! \" § $ % & / ( ) = ? ² ³ { [ ] } \\ + * ~ ' # @ < > | A Z a z 0 1 8 9 ";
-    private const string c_allWorkingCharacters = 
-      "! $ % & / ( ) = ? { [ ] } \\ + * ~ ' # @ < > | A Z a z 0 1 8 9 ";
+    private const string c_allCharactersIncludingBrokenOnes =
+        "^ ° ! \" § $ % & / ( ) = ? ² ³ { [ ] } \\ + * ~ ' # @ < > | A Z a z 0 1 8 9 ";
+
+    private const string c_allWorkingCharacters =
+        "! $ % & / ( ) = ? { [ ] } \\ + * ~ ' # @ < > | A Z a z 0 1 8 9 ";
 
     [Test]
     public void Selenium_TestWithAllCharacters_IncludeBrokenCharacters_FailsMostOfTheTime ()
     {
       var input = c_allCharactersIncludingBrokenOnes;
 
-      using (var driver = new ChromeDriver())
+      var driver = new ChromeDriver();
+      try
       {
         driver.Navigate().GoToUrl (GetTestPageUrl());
         var element = driver.FindElement (By.Name ("TextField"));
+
+        Console.WriteLine();
+        Console.WriteLine ("Started Chrome and loaded test page.");
+
         for (int index = 0; index < input.Length; index += 2)
         {
           var sub = input.Substring (0, index);
@@ -33,8 +39,19 @@ namespace Tests
 
           element.Clear();
           element.SendKeys (data);
-          Assert.That (element.GetAttribute ("value"), Is.EqualTo (data));
+          var actual = element.GetAttribute ("value");
+
+          Console.WriteLine ("Sent:     START_{0}_END", data);
+          Console.WriteLine ("Received: START_{0}_END", actual);
+
+          Assert.That (actual, Is.EqualTo (data));
         }
+      }
+      finally
+      {
+        driver.Dispose();
+        Console.WriteLine ("Closed Chrome");
+        Console.WriteLine();
       }
     }
 
@@ -43,10 +60,15 @@ namespace Tests
     {
       var input = c_allWorkingCharacters;
 
-      using (var driver = new ChromeDriver())
+      var driver = new ChromeDriver();
+      try
       {
         driver.Navigate().GoToUrl (GetTestPageUrl());
         var element = driver.FindElement (By.Name ("TextField"));
+
+        Console.WriteLine();
+        Console.WriteLine ("Started Chrome and loaded test page.");
+
         for (int index = 0; index < input.Length; index += 2)
         {
           var sub = input.Substring (0, index);
@@ -54,8 +76,19 @@ namespace Tests
 
           element.Clear();
           element.SendKeys (data);
-          Assert.That (element.GetAttribute ("value"), Is.EqualTo (data));
+          var actual = element.GetAttribute ("value");
+
+          Console.WriteLine ("Sent:     START_{0}_END", data);
+          Console.WriteLine ("Received: START_{0}_END", actual);
+
+          Assert.That (actual, Is.EqualTo (data));
         }
+      }
+      finally
+      {
+        driver.Dispose();
+        Console.WriteLine ("Closed Chrome");
+        Console.WriteLine();
       }
     }
 
@@ -64,10 +97,15 @@ namespace Tests
     {
       var input = c_allCharactersIncludingBrokenOnes;
 
-      using (var driver = new ChromeDriver())
+      var driver = new ChromeDriver();
+      try
       {
         driver.Navigate().GoToUrl (GetTestPageUrl());
         var element = driver.FindElement (By.Name ("TextField"));
+
+        Console.WriteLine();
+        Console.WriteLine ("Started Chrome and loaded test page.");
+
         for (int index = 0; index < input.Length; index += 2)
         {
           var character = input[index];
@@ -75,8 +113,19 @@ namespace Tests
 
           element.Clear();
           element.SendKeys (data);
-          Assert.That (element.GetAttribute ("value"), Is.EqualTo (data));
+          var actual = element.GetAttribute ("value");
+
+          Console.WriteLine ("Sent:     START_{0}_END", data);
+          Console.WriteLine ("Received: START_{0}_END", actual);
+
+          Assert.That (actual, Is.EqualTo (data));
         }
+      }
+      finally
+      {
+        driver.Dispose();
+        Console.WriteLine ("Closed Chrome");
+        Console.WriteLine();
       }
     }
 
@@ -87,16 +136,31 @@ namespace Tests
 
       var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
       sessionConfiguration.Driver = typeof (SeleniumWebDriver);
-      using (var browserSession = new BrowserSession (sessionConfiguration))
+      var browserSession = new BrowserSession (sessionConfiguration);
+      try
       {
         browserSession.Visit (GetTestPageUrl());
-
         var element = browserSession.FindField ("TextField");
+
+        Console.WriteLine();
+        Console.WriteLine ("Started Chrome and loaded test page.");
+
         var clearTextBox = Keys.Control + "a" + Keys.Control + Keys.Delete;
         var value = clearTextBox + input;
 
         element.SendKeys (value);
-        Assert.That (element.Value, Is.EqualTo (input));
+        var actual = element.Value;
+
+        Console.WriteLine ("Sent:     CTRL+a CTRL+DEL_{0}_END", input);
+        Console.WriteLine ("Received:                _{0}_END", actual);
+
+        Assert.That (actual, Is.EqualTo (input));
+      }
+      finally
+      {
+        browserSession.Dispose();
+        Console.WriteLine ("Closed Chrome");
+        Console.WriteLine();
       }
     }
 
@@ -107,16 +171,31 @@ namespace Tests
 
       var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
       sessionConfiguration.Driver = typeof (SeleniumWebDriver);
-      using (var browserSession = new BrowserSession (sessionConfiguration))
+      var browserSession = new BrowserSession (sessionConfiguration);
+      try
       {
         browserSession.Visit (GetTestPageUrl());
-
         var element = browserSession.FindField ("TextField");
+
+        Console.WriteLine();
+        Console.WriteLine ("Started Chrome and loaded test page.");
+
         var clearTextBox = Keys.Control + "a" + Keys.Control + Keys.Delete;
         var value = clearTextBox + input;
 
         element.SendKeys (value);
-        Assert.That (element.Value, Is.EqualTo (input));
+        var actual = element.Value;
+
+        Console.WriteLine ("Sent:     CTRL+a CTRL+DEL_{0}_END", input);
+        Console.WriteLine ("Received:                _{0}_END", actual);
+
+        Assert.That (actual, Is.EqualTo (input));
+      }
+      finally
+      {
+        browserSession.Dispose();
+        Console.WriteLine ("Closed Chrome");
+        Console.WriteLine();
       }
     }
 
@@ -127,16 +206,32 @@ namespace Tests
 
       var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
       sessionConfiguration.Driver = typeof (SeleniumWebDriver);
-      using (var browserSession = new BrowserSession (sessionConfiguration))
+      var browserSession = new BrowserSession (sessionConfiguration);
+      try
       {
         browserSession.Visit (GetTestPageUrl());
-
         var element = browserSession.FindField ("TextField");
+
+        Console.WriteLine();
+        Console.WriteLine ("Started Chrome and loaded test page.");
+
         var clearTextBox = Keys.Control + "a" + Keys.Control + Keys.Delete;
         var value = clearTextBox + input;
 
         element.SendKeys (value);
-        Assert.That (element.Value, Is.EqualTo (input));
+        var actual = element.Value;
+
+        Console.WriteLine ("Sent:     CTRL+a CTRL+DEL_{0}_END", input);
+        Console.WriteLine ("Received:                _{0}_END", actual);
+
+        Assert.That (actual, Is.EqualTo (input));
+
+      }
+      finally
+      {
+        browserSession.Dispose();
+        Console.WriteLine ("Closed Chrome");
+        Console.WriteLine();
       }
     }
 
