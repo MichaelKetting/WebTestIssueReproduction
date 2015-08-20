@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Coypu;
 using Coypu.Drivers;
 using Coypu.Drivers.Selenium;
@@ -23,7 +24,7 @@ namespace Tests
     {
       var input = c_allCharactersIncludingBrokenOnes;
 
-      var driver = new ChromeDriver();
+      var driver = CreateChromeDriver();
       try
       {
         driver.Navigate().GoToUrl (GetTestPageUrl());
@@ -60,7 +61,7 @@ namespace Tests
     {
       var input = c_allWorkingCharacters;
 
-      var driver = new ChromeDriver();
+      var driver = CreateChromeDriver();
       try
       {
         driver.Navigate().GoToUrl (GetTestPageUrl());
@@ -97,7 +98,7 @@ namespace Tests
     {
       var input = c_allCharactersIncludingBrokenOnes;
 
-      var driver = new ChromeDriver();
+      var driver = CreateChromeDriver();
       try
       {
         driver.Navigate().GoToUrl (GetTestPageUrl());
@@ -134,9 +135,7 @@ namespace Tests
     {
       var input = c_allCharactersIncludingBrokenOnes;
 
-      var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
-      sessionConfiguration.Driver = typeof (SeleniumWebDriver);
-      var browserSession = new BrowserSession (sessionConfiguration);
+      var browserSession = CreateBrowserSession();
       try
       {
         browserSession.Visit (GetTestPageUrl());
@@ -169,9 +168,7 @@ namespace Tests
     {
       var input = c_allCharactersIncludingBrokenOnes + c_allCharactersIncludingBrokenOnes;
 
-      var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
-      sessionConfiguration.Driver = typeof (SeleniumWebDriver);
-      var browserSession = new BrowserSession (sessionConfiguration);
+      var browserSession = CreateBrowserSession();
       try
       {
         browserSession.Visit (GetTestPageUrl());
@@ -204,9 +201,7 @@ namespace Tests
     {
       var input = c_allWorkingCharacters;
 
-      var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
-      sessionConfiguration.Driver = typeof (SeleniumWebDriver);
-      var browserSession = new BrowserSession (sessionConfiguration);
+      var browserSession = CreateBrowserSession();
       try
       {
         browserSession.Visit (GetTestPageUrl());
@@ -235,6 +230,21 @@ namespace Tests
       }
     }
 
+    private ChromeDriver CreateChromeDriver ([CallerMemberName] string callingMethod = null)
+    {
+      var driverService = ChromeDriverService.CreateDefaultService();
+      driverService.EnableVerboseLogging = true;
+      driverService.LogPath = string.Format ("{0}.ChromeDriver.log", callingMethod);
+      return new ChromeDriver (driverService, new ChromeOptions());
+    }
+
+    private static BrowserSession CreateBrowserSession ([CallerMemberName] string callingMethod = null)
+    {
+      var sessionConfiguration = new SessionConfiguration { Browser = Browser.Chrome };
+      sessionConfiguration.Driver = typeof (CustomChromeDriver);
+      var browserSession = new BrowserSession (sessionConfiguration, new CustomChromeDriver (callingMethod));
+      return browserSession;
+    }
 
     private string GetTestPageUrl ()
     {
